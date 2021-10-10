@@ -73,29 +73,43 @@ App = {
         const taskCount = await App.todoList.taskCount();
         const $taskTemplate = $(".taskTemplate");
 
-        for (var i = 1; i<= taskCount; i++) {
+        console.log(taskCount.toNumber())
+
+        for (var i = 1; i<= taskCount.toNumber(); i++) {
+            console.log("loading task ", i);
             const task = await App.todoList.tasks(i);
-            const taskId = task[0].toNumber;
+            const taskId = task[0].toNumber();
             const taskContent = task[1];
             const taskCompleted = task[2];
+            console.log(taskId, taskContent, taskCompleted);
 
             const $newTaskTemplate = $taskTemplate.clone();
-            $newTaskTemplate.find('content').html(taskContent);
+            $newTaskTemplate.find('.content').html(taskContent);
             $newTaskTemplate.find("input")
                             .prop("name", taskId)
                             .prop("checked", taskCompleted)
                             //.on("click", App.toggleCompleted)
             if (taskCompleted)
             {
-                $("#completedTaskList").html($newTaskTemplate)
+                $("#completedTaskList").append($newTaskTemplate)
             } else {
-                $("#taskList").html($newTaskTemplate)
+                $("#taskList").append($newTaskTemplate)
             }
             // Show the task
       $newTaskTemplate.show();
         }
 
           
+    },
+    createTask: async() => {
+        App.setLoading(true);
+
+        const content = $("#newTask").val();
+console.log(content);
+        await App.todoList.createTask(content, {from: App.account });
+        window.location.reload();
+
+        //App.setLoading(false);
     },
     setLoading:(boolean) => {
         App.loading = boolean;
